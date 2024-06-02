@@ -12,7 +12,7 @@ function Card({
     <div>
       <img
         className={img.isSelected ? "img" : " emptyCard img"}
-        onClick={() => handleSelect(img)}
+        onClick={() => (img.isSelected ? null : handleSelect(img))}
         src={img.src}
         alt={img.src}
       />
