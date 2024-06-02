@@ -1,24 +1,50 @@
-.Game {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-}
-
 .GameContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* This will make the container take up the full height of the viewport */
+  height: calc(
+    100vh - 60px
+  ); /* Full height of the viewport minus 60px for margin */
+  width: calc(
+    100vw - 60px
+  ); /* Full width of the viewport minus 60px for margin */
+  padding: 0;
+  margin: 30px; /* Add a margin of 10 pixels all around */
+}
+
+.Game {
+  display: grid;
+  grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-width: 100%; /* Ensure grid doesn't exceed viewport width */
+  height: 100%; /* Fill the entire height of the parent container */
 }
 
 /* Media queries for responsiveness */
 @media (max-width: 1200px) {
   .Game {
-    grid-template-columns: 1fr 1fr 1fr; /* 3 columns for screens smaller than 1200px */
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 900px) {
   .Game {
-    grid-template-columns: 1fr 1fr; /* 2 columns for screens smaller than 900px */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 425px) {
+  .GameContainer {
+    height: calc(
+      100vh - 20px
+    ); /* Full height of the viewport minus 20px for margin */
+    width: calc(
+      100vw - 20px
+    ); /* Full width of the viewport minus 20px for margin */
+    margin: 10px; /* Add a margin of 10 pixels all around */
+  }
+  .Game {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
