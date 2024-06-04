@@ -2,19 +2,19 @@ import { ImageCard } from "../../types/ImageCard";
 import "./Card.css";
 
 function Card({
-  img,
-  handleSelect,
+  image,
+  onSelect,
 }: {
-  img: ImageCard;
-  handleSelect: (img: ImageCard) => void;
+  image: ImageCard;
+  onSelect: (img: ImageCard) => void;
 }) {
   return (
     <div>
       <img
-        className={img.isSelected ? "img" : " emptyCard img"}
-        onClick={() => (img.isSelected ? null : handleSelect(img))}
-        src={img.src}
-        alt={img.src}
+        className={image.isSelected ? "img" : " emptyCard img"}
+        onClick={() => (image.isSelected ? null : onSelect(image))}
+        src={image.src}
+        alt={image.src}
       />
     </div>
   );

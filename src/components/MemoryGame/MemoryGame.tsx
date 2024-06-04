@@ -1,15 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+
 import Card from "../Card";
 import "./MemoryGame.css";
 import { ImageCard } from "../../types/ImageCard";
 
-function shuffleArray(array: string[]): string[] {
-  return array.sort(() => Math.random() - 0.5);
-}
+import { shuffle } from "lodash";
 
 function createGameImages(images: string[]): ImageCard[] {
   const doubledImages = [...images, ...images];
-  const shuffledImages = shuffleArray(doubledImages);
+  const shuffledImages = shuffle(doubledImages);
   return shuffledImages.map((src, index) => ({
     src,
     index,
@@ -25,44 +24,57 @@ function MemoryGame({ images }: { images: string[] }) {
     setGameImages(createGameImages(images));
   }, [images]);
 
-  useEffect(() => {
-    if (selectedInRound.length === 2) {
-      const [first, second] = selectedInRound;
+  const handleSelect = (selectedImage: ImageCard) => {
+    const selectedCurrentRound = [...selectedInRound, selectedImage.index];
+    const updatedImages = gameImages.map((imageItem) =>
+      imageItem.index === selectedImage.index
+        ? { ...imageItem, isSelected: true }
+        : imageItem
+    );
+    setGameImages(updatedImages);
+
+    // if round is over - i.e. user clicked two images
+    if (selectedCurrentRound.length === 2) {
+      const [first, second] = selectedCurrentRound;
+      // if we don't have a match
+
       if (
         gameImages[first].src !== gameImages[second].src ||
         first === second
       ) {
-        setTimeout(() => {
-          setGameImages((prevImages) =>
-            prevImages.map((img) =>
-              img.index === first || img.index === second
-                ? { ...img, isSelected: false }
-                : img
-            )
-          );
-        }, 400);
+        // flip images back around
+        setGameImages(
+          updatedImages.map((imageItem) =>
+            imageItem.index === first
+              ? { ...imageItem, isSelected: false }
+              : imageItem
+          )
+        );
+        setSelectedInRound([second]);
+      } else {
+        setSelectedInRound([]);
       }
-      setSelectedInRound([]);
 
-      const isGameFinished = gameImages.every((img) => img.isSelected);
+      // if at the end of the round all images are selected
+      // reset the game
+      const isGameFinished = updatedImages.every(
+        (imageItem) => imageItem.isSelected
+      );
       if (isGameFinished) setGameImages(createGameImages(images));
+    } else {
+      setSelectedInRound(selectedCurrentRound);
     }
-  }, [selectedInRound, gameImages, images]);
-
-  const handleSelect = useCallback((image: ImageCard) => {
-    setSelectedInRound((prevSelected) => [...prevSelected, image.index]);
-    setGameImages((prevImages) =>
-      prevImages.map((img) =>
-        img.index === image.index ? { ...img, isSelected: true } : img
-      )
-    );
-  }, []);
+  };
 
   return (
     <div className="GameContainer">
       <div className="Game">
-        {gameImages.map((img) => (
-          <Card img={img} handleSelect={handleSelect} key={img.index} />
+        {gameImages.map((imageItem) => (
+          <Card
+            image={imageItem}
+            onSelect={handleSelect}
+            key={imageItem.index}
+          />
         ))}
       </div>
     </div>
